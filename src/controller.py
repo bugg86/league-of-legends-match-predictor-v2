@@ -129,13 +129,13 @@ def save_live_match(live_match, name) :
     outfile.close()
 
 # Make api call to get matches.json
-def get_matches(name, start, end) :
+def get_match_list(name, start, end) :
     puuid = get_summoner_puuid_by_name(name)
     if puuid != 'Invalid Request' :
         matches = americas_api.get_match_list_by_summoner_id(puuid, start, end)
         validation = error_check(matches)
         if validation == 'good response' :
-            save_matches(matches, name)
+            save_match_list(matches, name)
         else :
             print('Could not write file due to an api call error. Please see response message below:')
             print(validation)
@@ -143,7 +143,7 @@ def get_matches(name, start, end) :
         print('summoner.json has already been generated for the requested user.')
 
 # Save matches.json.
-def save_matches(matches, name) :
+def save_match_list(matches, name) :
     dir = 'data/' + name + '/matches'
     if check_dir(dir) != True :
         os.mkdir(dir)

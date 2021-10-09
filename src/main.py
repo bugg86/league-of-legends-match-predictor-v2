@@ -21,4 +21,4 @@ if live_match_option == 'y' :
 matches_option = input('Do you want to generate matches.json? y/n : ')
 count = int(input('How many matches? Enter number: '))
 if matches_option == 'y' :
-    Controller.get_matches(name, 0, count)
+    Controller.get_match_list(name, 0, count)
