@@ -17,3 +17,8 @@ if champ_mastery_option == 'y' :
 live_match_option = input('Do you want to generate live_match.json? y/n : ')
 if live_match_option == 'y' :
     Controller.get_live_match(name)
+
+matches_option = input('Do you want to generate matches.json? y/n : ')
+count = int(input('How many matches? Enter number: '))
+if matches_option == 'y' :
+    Controller.get_matches(name, 0, count)

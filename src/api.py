@@ -1,7 +1,7 @@
 import requests
 import consts as Consts
 
-key = 'RGAPI-34c449af-c9ef-49c2-af46-46eae22151f2'
+key = 'RGAPI-f84a553c-ba58-45d6-ae7a-ef9c5b31b137'
 
 class RiotApi(object) :
     def __init__(self, api_key, region) :
@@ -60,5 +60,15 @@ class RiotApi(object) :
         api_url = Consts.URL['live_match_by_id'].format(
             version = Consts.API_VERSIONS['spectator'],
             summonerID = summonerid
+        )
+        return self.request(api_url)
+    
+    # Look up matches based on puuid and start and end indices.
+    def get_match_list_by_summoner_id(self, puuid, start, count) :
+        api_url = Consts.URL['matches'].format(
+            version = Consts.API_VERSIONS['match'],
+            puuid = puuid,
+            start = start,
+            count = count
         )
         return self.request(api_url)

@@ -3,7 +3,7 @@ import json
 import os
 import consts as Consts
 
-key = 'RGAPI-34c449af-c9ef-49c2-af46-46eae22151f2'
+key = 'RGAPI-f84a553c-ba58-45d6-ae7a-ef9c5b31b137'
 na1_api = RiotApi(key, Consts.REGIONS['north_america'])
 americas_api = RiotApi(key, Consts.REGIONS['americas'])
 
@@ -93,7 +93,7 @@ def get_champion_mastery(name) :
             print('Could not write file due to an api call error. Please see response message below:')
             print(validation)
     else :
-        print('Summoner.json has not been generated for the requested user.')
+        print('summoner.json has not been generated for the requested user.')
 
 # Save champion_mastery.json.
 def save_champion_mastery(champion_mastery, name) :
@@ -104,9 +104,9 @@ def save_champion_mastery(champion_mastery, name) :
             outfile.write(json_champion_mastery)
         outfile.close()
     else :
-        print('champion_mastery.json already exists for the requested user.')
+        print('summoner.json already exists for the requested user.')
 
-# Make api to get live_match.json.
+# Make api call to get live_match.json.
 def get_live_match(name) :
     summonerid = get_encrypted_summoner_id_by_name(name)
     if summonerid != 'Invalid Request' :
@@ -118,7 +118,7 @@ def get_live_match(name) :
             print('Could not write file due to an api call error. Please see response message below:')
             print(validation)
     else :
-        print('live_match.json has not been generated for the requested user.')
+        print('summoner.json has already been generated for the requested user.')
 
 # Save champion_mastery.json.
 def save_live_match(live_match, name) :
@@ -128,6 +128,30 @@ def save_live_match(live_match, name) :
         outfile.write(json_live_match)
     outfile.close()
 
+# Make api call to get matches.json
+def get_matches(name, start, end) :
+    puuid = get_summoner_puuid_by_name(name)
+    if puuid != 'Invalid Request' :
+        matches = americas_api.get_match_list_by_summoner_id(puuid, start, end)
+        validation = error_check(matches)
+        if validation == 'good response' :
+            save_matches(matches, name)
+        else :
+            print('Could not write file due to an api call error. Please see response message below:')
+            print(validation)
+    else :
+        print('summoner.json has already been generated for the requested user.')
+
+# Save matches.json.
+def save_matches(matches, name) :
+    dir = 'data/' + name + '/matches'
+    if check_dir(dir) != True :
+        os.mkdir(dir)
+    path = 'data/' + name + '/matches/matches.json'
+    json_matches = json.dumps(matches, indent=4)
+    with open(path, 'x') as outfile :
+        outfile.write(json_matches)
+    outfile.close()
 
 
 #==================UTILITY FUNCTIONS==================#
