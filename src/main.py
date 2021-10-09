@@ -9,3 +9,7 @@ if summoner_option == 'y' :
 league_option = input('Do you want to generate league.json? y/n : ')
 if league_option == 'y' : 
     Controller.get_league(name)
+
+champ_mastery_option = input('Do you want to generate champ_mastery.json? y/n : ')
+if champ_mastery_option == 'y' :
+    Controller.get_champion_mastery(name)

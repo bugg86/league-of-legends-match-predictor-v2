@@ -81,6 +81,32 @@ def save_league(league, name) :
     else :
         print('league.json already exists for the requested user.')
 
+# Make api call to get champion_mastery.json.
+def get_champion_mastery(name) :
+    summonerid = get_encrypted_summoner_id_by_name(name)
+    if summonerid != 'Invalid Request' :
+        champion_mastery = na1_api.get_champ_mastery_by_summoner_id(summonerid)
+        validation = error_check(champion_mastery)
+        if validation == 'good response' :
+            save_champion_mastery(champion_mastery, name)
+        else :
+            print('Could not write file due to an api call error. Please see response message below:')
+            print(validation)
+    else :
+        print('Summoner.json has not been generated for the requested user.')
+
+# Save champion_mastery.json.
+def save_champion_mastery(champion_mastery, name) :
+    path = 'data/' + name + '/champion_mastery.json'
+    if check_file(path) != True :
+        json_champion_mastery = json.dumps(champion_mastery, indent=4)
+        with open(path, 'x') as outfile :
+            outfile.write(json_champion_mastery)
+        outfile.close()
+    else :
+        print('champion_mastery.json already exists for the requested user.')
+
+
 
 #==================UTILITY FUNCTIONS==================#
 

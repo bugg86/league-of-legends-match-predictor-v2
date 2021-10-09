@@ -46,3 +46,11 @@ class RiotApi(object) :
             summonerID = summonerid
         )
         return self.request(api_url)
+
+    # Look up champion mastery information using encrypted summoner id.
+    def get_champ_mastery_by_summoner_id(self, summonerid) :
+        api_url = Consts.URL['champion_mastery_by_summoner_id'].format(
+            version = Consts.API_VERSIONS['champion-mastery'],
+            summonerID = summonerid
+        )
+        return self.request(api_url)
