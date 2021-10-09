@@ -106,6 +106,28 @@ def save_champion_mastery(champion_mastery, name) :
     else :
         print('champion_mastery.json already exists for the requested user.')
 
+# Make api to get live_match.json.
+def get_live_match(name) :
+    summonerid = get_encrypted_summoner_id_by_name(name)
+    if summonerid != 'Invalid Request' :
+        live_match = na1_api.get_live_match_by_summoner_id(summonerid)
+        validation = error_check(live_match)
+        if validation == 'good response' :
+            save_live_match(live_match, name)
+        else :
+            print('Could not write file due to an api call error. Please see response message below:')
+            print(validation)
+    else :
+        print('live_match.json has not been generated for the requested user.')
+
+# Save champion_mastery.json.
+def save_live_match(live_match, name) :
+    path = 'data/' + name + '/live_match.json'
+    json_live_match = json.dumps(live_match, indent=4)
+    with open(path, 'x') as outfile :
+        outfile.write(json_live_match)
+    outfile.close()
+
 
 
 #==================UTILITY FUNCTIONS==================#

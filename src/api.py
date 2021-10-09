@@ -54,3 +54,11 @@ class RiotApi(object) :
             summonerID = summonerid
         )
         return self.request(api_url)
+
+    # Look up live match information using encrypted summoner id.
+    def get_live_match_by_summoner_id(self, summonerid) :
+        api_url = Consts.URL['live_match_by_id'].format(
+            version = Consts.API_VERSIONS['spectator'],
+            summonerID = summonerid
+        )
+        return self.request(api_url)

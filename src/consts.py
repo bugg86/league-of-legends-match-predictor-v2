@@ -20,7 +20,7 @@ URL = {
     'summoner_by_puuid' : 'summoner/v{version}/summoners/by-puuid/{puuid}',
     'league_by_summoner_id' : 'league/v{version}/entries/by-summoner/{summonerID}',
     'champion_mastery_by_summoner_id' : 'champion-mastery/v{version}/champion-masteries/by-summoner/{summonerID}',
-    'spectator_by_summoner_id' : 'spectator/v{version}/active-games/by-summoner/{summonerID}',
+    'live_match_by_id' : 'spectator/v{version}/active-games/by-summoner/{summonerID}',
     'summoner_by_id' : 'summoner/v{version}/summoners/{summonerID}',
     'account_by_puuid' : 'account/v{version}/accounts/by-puuid/{puuid}'
 }

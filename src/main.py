@@ -13,3 +13,7 @@ if league_option == 'y' :
 champ_mastery_option = input('Do you want to generate champ_mastery.json? y/n : ')
 if champ_mastery_option == 'y' :
     Controller.get_champion_mastery(name)
+
+live_match_option = input('Do you want to generate live_match.json? y/n : ')
+if live_match_option == 'y' :
+    Controller.get_live_match(name)
