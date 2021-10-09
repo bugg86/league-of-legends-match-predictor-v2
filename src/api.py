@@ -72,3 +72,11 @@ class RiotApi(object) :
             count = count
         )
         return self.request(api_url)
+    
+    # Look up match based on matchid.
+    def get_match_by_match_id(self, matchid) :
+        api_url = Consts.URL['match'].format(
+            version = Consts.URL['match'],
+            matchID = matchid
+        )
+        return self.request(api_url)

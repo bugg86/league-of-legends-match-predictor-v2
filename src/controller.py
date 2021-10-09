@@ -153,6 +153,28 @@ def save_match_list(matches, name) :
         outfile.write(json_matches)
     outfile.close()
 
+# Make api call to get {matchid}.json.
+def get_match(name, matchid) :
+    match = americas_api.get_match_by_match_id(matchid)
+    validation = error_check(match)
+    if validation == 'good response' :
+        save_match(match, name, matchid)
+    else :
+        print('Could not write file due to an api call error. Please see response message below:')
+        print(validation)
+
+# Save {matchid}.json.
+def save_match(match, name, matchid) :
+    dir = 'data/' + name + '/matches'
+    if check_dir(dir) != True :
+        os.mkdir(dir)
+    path = 'data/' = name + '/matches/' + str(matchid) + '.json'
+    json_match = json.dumps(match, indent=4)
+    with open(path, 'x') as outfile :
+        outfile.write(json_match)
+    outfile.close()
+
+
 
 #==================UTILITY FUNCTIONS==================#
 
