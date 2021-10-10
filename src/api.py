@@ -20,7 +20,7 @@ class RiotApi(object) :
             ), 
             params = args
         )
-        # print (response.url)
+        #print (response.url)
         return response.json()
     
     # Look up summoner information using their summoner name.
@@ -76,7 +76,7 @@ class RiotApi(object) :
     # Look up match based on matchid.
     def get_match_by_match_id(self, matchid) :
         api_url = Consts.URL['match'].format(
-            version = Consts.URL['match'],
+            version = Consts.API_VERSIONS['match'],
             matchID = matchid
         )
         return self.request(api_url)
