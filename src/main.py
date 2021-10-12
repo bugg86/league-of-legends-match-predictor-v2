@@ -1,10 +1,13 @@
 import model as Model
+import controller as Controller
 
-name = input('Enter summoner name: ')
+Controller.do_shit()
 
-# print(Model.get_summoner_winrate(name))
-print(Model.get_summoner_level(name))
-Model.get_match(name, 'NA1_4065555392')
+# name = input('Enter summoner name: ')
+
+# # print(Model.get_summoner_winrate(name))
+# print(Model.get_summoner_level(name))
+# Model.get_match(name, 'NA1_4065555392')
 
 # summoner_option = input('Do you want to generate summoner.json? y/n : ')
 # if summoner_option == 'y' :
