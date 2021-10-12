@@ -255,6 +255,26 @@ def get_summoner_rank(name) :
     division = league['division']
     return str(tier + ' ' + division)
 
+# Parse summoner_spells.json to get the summoner spell name using the id.
+def get_summoner_spell_name(id) :
+    name = ''
+    with open('data/summoner_spells.json', 'r') as infile :
+        temp = json.load(infile)
+        name = temp[id]
+    infile.close()
+
+    return str(name)
+
+# Parse champions.json to get the champion name using the id.
+def get_champion_name(id) :
+    name = ''
+    with open('data/champions.json', 'r') as infile :
+        temp = json.load(infile)
+        name = temp[id]
+    infile.close()
+
+    return str(name)
+
 
 
 #==================UTILITY FUNCTIONS==================#
