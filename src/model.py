@@ -49,7 +49,7 @@ def get_account(name) :
 
 # Save account.json
 def save_account(account, name) :
-    path = 'data/' + name + '/account.json'
+    path = 'data/{name}/account.json'.format(name=name)
     if check_file(path) != True :
         json_account = json.dumps(account, indent=4)
         with open(path, 'x') as outfile :
@@ -74,7 +74,7 @@ def get_league(name) :
 
 # Save league.json.
 def save_league(league, name) :
-    path = 'data/' + name + '/league.json'
+    path = 'data/{name}/league.json'.format(name=name)
     if check_file(path) != True :
         json_league = json.dumps(league, indent=4)
         with open(path, 'x') as outfile :
@@ -99,7 +99,7 @@ def get_champion_mastery(name) :
 
 # Save champion_mastery.json.
 def save_champion_mastery(champion_mastery, name) :
-    path = 'data/' + name + '/champion_mastery.json'
+    path = 'data/{name}/champion_mastery.json'.format(name=name)
     if check_file(path) != True :
         json_champion_mastery = json.dumps(champion_mastery, indent=4)
         with open(path, 'x') as outfile :
@@ -124,7 +124,7 @@ def get_live_match(name) :
 
 # Save champion_mastery.json.
 def save_live_match(live_match, name) :
-    path = 'data/' + name + '/live_match.json'
+    path = 'data/{name}/live_match.json'.format(name=name)
     json_live_match = json.dumps(live_match, indent=4)
     with open(path, 'x') as outfile :
         outfile.write(json_live_match)
@@ -146,7 +146,7 @@ def get_match_list(name, start, end) :
 
 # Save matches.json.
 def save_match_list(matches, name) :
-    dir = 'data/' + name + '/matches'
+    dir = 'data/{name}/matches'.format(name=name)
     if check_dir(dir) != True :
         os.mkdir(dir)
     path = 'data/' + name + '/matches/matches.json'
@@ -167,7 +167,7 @@ def get_match(name, matchid) :
 
 # Save {matchid}.json.
 def save_match(match, name, matchid) :
-    dir = 'data/' + name + '/matches'
+    dir = 'data/{name}/matches'.format(name=name)
     if check_dir(dir) != True :
         os.mkdir(dir)
     path = 'data/' + name + '/matches/' + str(matchid) + '.json'
@@ -182,7 +182,7 @@ def save_match(match, name, matchid) :
 
 # Parse summoner.json to get summoner level.
 def get_summoner_level(name) :
-    path = 'data/' + name + '/summoner.json'
+    path = 'data/{name}/summoner.json'.format(name=name)
     summoner = {}
     if check_file(path) == True :
         with open(path, 'r') as infile :
@@ -195,7 +195,7 @@ def get_summoner_level(name) :
 
 # Parse league.json and calculate winrate.
 def get_summoner_winrate(name) :
-    path = 'data/' + name + '/league.json'
+    path = 'data/{name}/league.json'.format(name=name)
     league = {}
     if check_file(path) == True :
         with open(path, 'r') as infile :
@@ -211,7 +211,7 @@ def get_summoner_winrate(name) :
 
 # Parse league.json and the scoring json files to get numerical value for rank.
 def get_summoner_rank_score(name) :
-    path = 'data/' + name + '/league.json'
+    path = 'data/{name}/league.json'.format(name=name)
     league = {}
     if check_file(path) == True :
         with open(path, 'r') as infile :
@@ -242,7 +242,7 @@ def get_summoner_rank_score(name) :
 
 # Parse league.json and return a concat of the tier and division for the summoner's rank.
 def get_summoner_rank(name) :
-    path = 'data/' + name + '/league.json'
+    path = 'data/{name}/league.json'.format(name=name)
     league = {}
     if check_file(path) == True :
         with open(path, 'r') as infile :
@@ -276,6 +276,76 @@ def get_champion_name(id) :
     return str(name)
 
 
+# Parse champion_mastery.json to get champion mastery level given an id.
+def get_champion_mastery_level(name, id) :
+    path = 'data/{name}/champion_mastery.json'.format(name=name)
+    champion_mastery = []
+    championLevel = 0
+    if check_file(path) == True :
+        with open(path, 'r') as infile :
+            champion_mastery = json.load(infile)
+        infile.close()
+    for champion in champion_mastery :
+        if champion['championId'] == id :
+            championLevel = champion['championLevel']
+            break
+    else :
+        print('champion_mastery.json does not exist for the requested user.')
+    return championLevel
+
+# Parse runes.json to get rune name given an id.
+def get_rune_name(id) :
+    name = ''
+    with open('data/runes.json', 'r') as infile :
+        temp = json.load(infile)
+        name = temp[id]
+    infile.close()
+
+    return str(name)
+
+
+#==================PARSE LIVE MATCH JSON==================#
+
+# Get participants array from live_match.json.
+def lm_get_live_match_participants(name) : 
+    path = 'data/{name}/live_match.json'.format(name=name)
+    live_match = {}
+    if check_file(path) == True :
+        with open(path, 'r') as infile :
+            live_match = json.load(infile)
+        infile.close()
+    else :
+        print('live_match.json does not exist for the requested user.')
+    participants = live_match['participants']
+
+    return participants
+
+# Get summoner spell id 1 from participant object from participants array.
+def lm_get_summoner_spell_name_1(participant) :
+    return get_summoner_spell_name(participant['spell1Id'])
+
+# Get summoner spell id 2 from participant object from participants array.
+def lm_get_summoner_spell_name_2(participant) :
+    return get_summoner_spell_name(participant['spell2Id'])
+
+# Get champion id from participant object from participants array.
+def lm_get_champion_name(participant) :
+    return get_champion_name(participant['championId'])
+
+# Get summoner name from participant object from participants array.
+def lm_get_summoner_name(participant) :
+    return participant['summonerName']
+
+# Get team id from participant object from participants array.
+def lm_get_team_id(participant) :
+    return participant['teamId']
+
+# Get rune array from participant object from participants array.
+def lm_get_runes(participant) :
+    perks = participant['perks']
+    return perks['perkIds']
+
+
 
 #==================UTILITY FUNCTIONS==================#
 
@@ -297,7 +367,7 @@ def check_file(path) :
 
 # Returns puuid based on summoner name.
 def get_summoner_puuid_by_name(name) :
-    path = 'data/' + name + '/summoner.json'
+    path = 'data/{name}/summoner.json'.format(name=name)
     # Return puuid if the summoner.json for the requested user exists.
     if check_file(path) :
         summoner = {}
@@ -310,7 +380,7 @@ def get_summoner_puuid_by_name(name) :
 
 # Returns encrypted summoner id based on summoner name.
 def get_encrypted_summoner_id_by_name(name) :
-    path = 'data/' + name + '/summoner.json'
+    path = 'data/{name}/summoner.json'.format(name=name)
     # Return puuid if the summoner.json for the requested user exists.
     if check_file(path) :
         summoner = {}

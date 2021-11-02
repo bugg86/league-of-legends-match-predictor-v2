@@ -1,0 +1,19 @@
+Live Match JSON:
+- Get data from participants array.
+- Fields:
+    - teamID
+    - spell1Id
+    - spell2Id
+    - championId
+    - summonerName
+    - perks (Runes)
+- Transformations:
+    DONE - spell1Id --> spell1Name (in summoner_spells.json in GameData)
+    DONE - spell2Id --> spell2Name (in summoner_spells.json in GameData)
+    DONE - championId --> championName (in champions.json in GameData)
+    DONE - perks --> perkNames
+- Data Lookups:
+    DONE championId --> championPoints(mastery score in champion_mastery.json)
+    DONE - summonerName --> summonerLevel (in summoner.json)
+    DONE - summonerName --> summonerRank (use decimal scoring system)
+    DONE - summonerName --> winrate (calculate from values in league.json)
