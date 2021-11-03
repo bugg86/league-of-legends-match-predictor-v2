@@ -21,7 +21,7 @@ def get_summoner(name) :
     
 # Save summoner.json.
 def save_summoner(summoner, name) :
-    path = 'data/Summoners/'.format(name=name) #Define player data path.
+    path = 'data/Summoners/{name}/'.format(name=name) #Define player data path.
     # Create player directory if it does not already exist.
     if check_dir(path) != True :
         os.mkdir(path)
@@ -176,6 +176,12 @@ def save_match(match, name, matchid) :
         outfile.write(json_match)
     outfile.close()
 
+# Generate summoner.json, league.json, and champion_mastery.json for a given summoner.
+def generate_summoner_json(name) :
+    get_summoner(name)
+    get_league(name)
+    get_champion_mastery(name)
+
 
 
 #==================JSON PARSING FUNCTIONS==================#
@@ -189,7 +195,11 @@ def get_summoner_level(name) :
             summoner = json.load(infile)
         infile.close()
     else :
-        print('summoner.json does not exist for the requested user.')
+        print('summoner.json does not exist for the requested user, generating summoner files.')
+        generate_summoner_json(name)
+        with open(path, 'r') as infile :
+            summoner = json.load(infile)
+        infile.close()
 
     return summoner['summonerLevel']
 
@@ -203,7 +213,13 @@ def get_summoner_winrate(name) :
             league = temp[0]
         infile.close()
     else :
-        print('league.json does not exist for the requested user.')
+        print('league.json does not exist for the requested user, generating summoner files.')
+        generate_summoner_json(name)
+        with open(path, 'r') as infile :
+            temp = json.load(infile)
+            league = temp[0]
+        infile.close()
+
     wins = league['wins']
     losses = league['losses']
 
@@ -219,9 +235,15 @@ def get_summoner_rank_score(name) :
             league = temp[0]
         infile.close()
     else :
-        print('league.json does not exist for the requested user.')
+        print('league.json does not exist for the requested user, generating summoner files.')
+        generate_summoner_json(name)
+        with open(path, 'r') as infile :
+            temp = json.load(infile)
+            league = temp[0]
+        infile.close()
+
     tier = league['tier']
-    division = league['division']
+    division = league['rank']
     # Get the score for the tier.
     path = 'data/rank_tier_scoring.json'
     json_tier_scoring = {}
@@ -250,7 +272,13 @@ def get_summoner_rank(name) :
             league = temp[0]
         infile.close()
     else :
-        print('league.json does not exist for the requested user.')
+        print('league.json does not exist for the requested user, generating summoner files.')
+        generate_summoner_json(name)
+        with open(path, 'r') as infile :
+            temp = json.load(infile)
+            league = temp[0]
+        infile.close()
+
     tier = league['tier']
     division = league['division']
     return str(tier + ' ' + division)
@@ -260,7 +288,7 @@ def get_summoner_spell_name(id) :
     name = ''
     with open('data/summoner_spells.json', 'r') as infile :
         temp = json.load(infile)
-        name = temp[id]
+        name = temp[str(id)]
     infile.close()
 
     return str(name)
@@ -270,7 +298,7 @@ def get_champion_name(id) :
     name = ''
     with open('data/champions.json', 'r') as infile :
         temp = json.load(infile)
-        name = temp[id]
+        name = temp[str(id)]
     infile.close()
 
     return str(name)
@@ -285,12 +313,17 @@ def get_champion_mastery_level(name, id) :
         with open(path, 'r') as infile :
             champion_mastery = json.load(infile)
         infile.close()
+    else :
+        print('champion_mastery.json does not exist for the requested user, generating summoner files.')
+        generate_summoner_json(name)
+        with open(path, 'r') as infile :
+            champion_mastery = json.load(infile)
+        infile.close()
+
     for champion in champion_mastery :
         if champion['championId'] == id :
             championLevel = champion['championLevel']
             break
-    else :
-        print('champion_mastery.json does not exist for the requested user.')
     return championLevel
 
 # Parse runes.json to get rune name given an id.
@@ -298,7 +331,7 @@ def get_rune_name(id) :
     name = ''
     with open('data/runes.json', 'r') as infile :
         temp = json.load(infile)
-        name = temp[id]
+        name = temp[str(id)]
     infile.close()
 
     return str(name)
@@ -329,6 +362,10 @@ def lm_get_summoner_spell_name_2(participant) :
     return get_summoner_spell_name(participant['spell2Id'])
 
 # Get champion id from participant object from participants array.
+def lm_get_champion_id(participant) :
+    return participant['championId']
+
+# Get champion name from participant object from participants array.
 def lm_get_champion_name(participant) :
     return get_champion_name(participant['championId'])
 
