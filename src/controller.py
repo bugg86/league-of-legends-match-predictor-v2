@@ -10,6 +10,12 @@ def get_user_input_name():
 
 #============DATA GENERATION FUNCTIONS============#
 
+# Generate all summoner related json files.
+def generate_all_summoner_json(name):
+    generate_summoner_json(name)
+    generate_league_json(name)
+    generate_champion_mastery_json(name)
+
 # Generate summoner.json for a given summoner name.
 def generate_summoner_json(name):
     Model.get_summoner(name)
@@ -32,13 +38,15 @@ def generate_match_list(name, start, end):
 
 # Generate 'matchid'.json for a given user if their match_list.json exists.
 def generate_matches_json(name):
-    path = "data/{name}/matches.json".format(name=name)
+    path = "data/{name}/matches/matches.json".format(name=name)
     if Model.check_file(path) :
         with open(path, 'r') as f :
             match_list = json.load(f)
         f.close()
         for match in match_list :
             Model.get_match(name, match)
+    else :
+        print("No match list found for {name}".format(name=name))
 
 # This function will make calls to the model to generate an array that will be written to a csv file.
 def generate_live_match_data(name):

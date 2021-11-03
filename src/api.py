@@ -1,7 +1,7 @@
 import requests
 import consts as Consts
 
-key = 'RGAPI-f84a553c-ba58-45d6-ae7a-ef9c5b31b137'
+key = 'RGAPI-991be72a-f3a5-4e4e-a710-690edf794644'
 
 class RiotApi(object) :
     def __init__(self, api_key, region) :
