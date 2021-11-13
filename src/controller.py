@@ -92,7 +92,5 @@ def generate_live_match_entry_for_submission(name):
         
         count += 1
     
-    with open('data/entry.json', 'w') as f :
-        json.dump(entry, f, indent=4)
-    f.close()
+    Model.dump_json('data/entry.json', entry)
     return entry

@@ -3,7 +3,7 @@ import json
 import os
 import consts as Consts
 
-key = 'RGAPI-991be72a-f3a5-4e4e-a710-690edf794644'
+key = 'RGAPI-9ff68402-d7eb-4ff8-83e3-084a05db7866'
 na1_api = RiotApi(key, Consts.REGIONS['north_america'])
 americas_api = RiotApi(key, Consts.REGIONS['americas'])
 
@@ -437,3 +437,9 @@ def error_check(json_response) :
         return {'message' : message, 'status_code' : status_code}
     else :
         return 'good response'
+    
+# Dump json to specified file path.
+def dump_json(path, data) :
+    with open(path, 'w') as outfile :
+        json.dumps(data, outfile, indent=4)
+    outfile.close()
