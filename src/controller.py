@@ -37,7 +37,7 @@ def generate_match_list(name, start, end):
 def generate_matches_json(name):
     path = "data/Summoners/{name}/matches/matches.json".format(name=name)
     if Model.check_file(path) :
-        match_list = Model.read_json(path)
+        match_list = Model.read_json_array(path)
         for match in match_list :
             Model.get_match(name, match)
     else :
@@ -49,10 +49,12 @@ def generate_match_dataset(name):
     matchCount = 1
     participantCount = 1
     
-    matchData = Model.read_json('data/matchData.json')
+    participantNames = [] # This will be used to wipe data from the data/Summoners/ folder in the future.
+    
+    matchData = []
     
     if Model.check_file(path) :
-        match_list = Model.read_json(path)
+        match_list = Model.read_json_array(path)
         for match in match_list :
             entry = {}
             startTime = time.time()
@@ -88,7 +90,6 @@ def generate_match_dataset(name):
                 # Store rune data in entry object.
                 runeCount = 1
                 runes = Model.m_get_runes(participant)
-                print(runes)
                 for rune in runes :
                     if (int(rune) - 8000) > 0 :
                         runeName = Model.get_rune_name(rune)
@@ -101,8 +102,7 @@ def generate_match_dataset(name):
             
             #Save match to file in case of interrupt during loop.
             matchData.append(entry)
-            Model.dump_json(matchData, 'data/matchData.json')
-            matchData = Model.read_json('data/matchData.json')
+            Model.dump_json('data/matchData.json', matchData)
             
             # Sleep for 40 seconds and print out runtime.
             endTime = time.time()
