@@ -24,6 +24,21 @@ if (input('Do you want to generate entry for submission to ML model? y/n : ')) =
     end = time.time()
     print('Runtime is {:.3f}s'.format(end - start))
 
-# end = input("How many matches: ")
-# Controller.generate_match_list(name, 0, end)
-# Controller.generate_matches_json(name)
+if (input("Do you want to generate a summoner's match history? y/n : ")) == 'y' :
+    endIndex = input("How many matches: ")
+    start = time.time()
+    Controller.generate_match_list(name, 0, endIndex)
+    end = time.time()
+    print('Runtime is {:.3f}s'.format(end - start))
+    
+    if (input("Do you want to generate the json files for the matches? y/n : ")) == 'y' :
+        start = time.time()
+        Controller.generate_matches_json(name)
+        end = time.time()
+        print('Runtime is {:.3f}s'.format(end - start))
+        
+        if (input("Do you want to add match data to the dataset for the ML model? y/n : ")) == 'y' :
+            start = time.time()
+            Controller.generate_match_dataset(name)
+            end= time.time()
+            print('Runtime is {:.3f}s'.format(end - start))

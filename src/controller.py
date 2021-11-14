@@ -1,7 +1,5 @@
-import csv
-import os
 import model as Model
-import json
+import time
 
 # Get user input.
 def get_user_input_name():
@@ -37,13 +35,81 @@ def generate_match_list(name, start, end):
 
 # Generate 'matchid'.json for a given user if their match_list.json exists.
 def generate_matches_json(name):
-    path = "data/{name}/matches/matches.json".format(name=name)
+    path = "data/Summoners/{name}/matches/matches.json".format(name=name)
     if Model.check_file(path) :
-        with open(path, 'r') as f :
-            match_list = json.load(f)
-        f.close()
+        match_list = Model.read_json(path)
         for match in match_list :
             Model.get_match(name, match)
+    else :
+        print("No match list found for {name}".format(name=name))
+        
+# Generate match dataset for a given user.
+def generate_match_dataset(name):
+    path = "data/Summoners/{name}/matches/matches.json".format(name=name)
+    matchCount = 1
+    participantCount = 1
+    
+    matchData = Model.read_json('data/matchData.json')
+    
+    if Model.check_file(path) :
+        match_list = Model.read_json(path)
+        for match in match_list :
+            entry = {}
+            startTime = time.time()
+            
+            path = "data/{name}/matches/{matchid}.json".format(name=name, matchid=match)
+            
+            participants = Model.m_get_match_participants(name, match)
+            for participant in participants :
+                # Parse the object for all the data.
+                summonerName = Model.m_get_summoner_name(participant)
+                print(summonerName)
+                summonerRank = Model.get_summoner_rank_score(summonerName)
+                summonerWinRate = Model.get_summoner_winrate(summonerName)
+                summonerLevel = Model.get_summoner_level(summonerName)
+                teamId = Model.m_get_team_id(participant)
+                championName = Model.m_get_champion_name(participant)
+                championId = Model.m_get_champion_id(participant)
+                championMastery = Model.get_champion_mastery_level(summonerName, championId)
+                spell1 = Model.m_get_summoner_spell_name_1(participant)
+                spell2 = Model.m_get_summoner_spell_name_2(participant)
+                
+                # Store data in entry object.
+                entry['Summoner{count}Name'.format(count=participantCount)] = summonerName
+                entry['Summoner{count}Rank'.format(count=participantCount)] = summonerRank
+                entry['Summoner{count}WinRate'.format(count=participantCount)] = summonerWinRate
+                entry['Summoner{count}Level'.format(count=participantCount)] = summonerLevel
+                entry['Summoner{count}TeamId'.format(count=participantCount)] = teamId
+                entry['Summoner{count}ChampionName'.format(count=participantCount)] = championName
+                entry['Summoner{count}ChampionMastery'.format(count=participantCount)] = championMastery
+                entry['Summoner{count}Spell1'.format(count=participantCount)] = spell1
+                entry['Summoner{count}Spell2'.format(count=participantCount)] = spell2
+                
+                # Store rune data in entry object.
+                runeCount = 1
+                runes = Model.m_get_runes(participant)
+                print(runes)
+                for rune in runes :
+                    if (int(rune) - 8000) > 0 :
+                        runeName = Model.get_rune_name(rune)
+                        runeCount += 1
+                        entry['Summoner{count}Rune{runeCount}Name'.format(count=participantCount, runeCount=runeCount)] = runeName
+                
+                participantCount += 1
+            
+            matchCount += 1
+            
+            #Save match to file in case of interrupt during loop.
+            matchData.append(entry)
+            Model.dump_json(matchData, 'data/matchData.json')
+            matchData = Model.read_json('data/matchData.json')
+            
+            # Sleep for 40 seconds and print out runtime.
+            endTime = time.time()
+            print('Runtime is {:.3f}s to generate match {count}.'.format((endTime - startTime), count=matchCount))
+            print('Waiting for 40 seconds before generating next match.')
+            time.sleep(40)
+            
     else :
         print("No match list found for {name}".format(name=name))
 
