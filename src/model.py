@@ -523,13 +523,10 @@ def error_check(json_response) :
 # Dump json to specified file path.
 def dump_json(path, data) :
     with open(path, 'w') as outfile :
-        json.dumps(data, indent=4)
+        json.dump(data, outfile, indent=4)
     outfile.close()
     
 # Return json file contents.
-def read_json_array(path) :
-    data = []
+def read_json(path) :
     with open(path, 'r') as file :
-        data = json.load(file)
-    file.close()
-    return data
+        return json.load(file)

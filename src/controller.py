@@ -1,5 +1,6 @@
 import model as Model
 import time
+import json
 
 # Get user input.
 def get_user_input_name():
@@ -37,7 +38,7 @@ def generate_match_list(name, start, end):
 def generate_matches_json(name):
     path = "data/Summoners/{name}/matches/matches.json".format(name=name)
     if Model.check_file(path) :
-        match_list = Model.read_json_array(path)
+        match_list = Model.read_json(path)
         for match in match_list :
             Model.get_match(name, match)
     else :
@@ -54,7 +55,7 @@ def generate_match_dataset(name):
     matchData = []
     
     if Model.check_file(path) :
-        match_list = Model.read_json_array(path)
+        match_list = Model.read_json(path)
         for match in match_list :
             entry = {}
             startTime = time.time()
@@ -93,8 +94,8 @@ def generate_match_dataset(name):
                 for rune in runes :
                     if (int(rune) - 8000) > 0 :
                         runeName = Model.get_rune_name(rune)
-                        runeCount += 1
                         entry['Summoner{count}Rune{runeCount}Name'.format(count=participantCount, runeCount=runeCount)] = runeName
+                        runeCount += 1
                 
                 participantCount += 1
             
@@ -103,6 +104,7 @@ def generate_match_dataset(name):
             #Save match to file in case of interrupt during loop.
             matchData.append(entry)
             Model.dump_json('data/matchData.json', matchData)
+            matchData = Model.read_json('data/matchData.json')
             
             # Sleep for 40 seconds and print out runtime.
             endTime = time.time()
@@ -153,8 +155,8 @@ def generate_live_match_entry_for_submission(name):
         for rune in runes :
             if (rune - 8000) > 0 :
                 runeName = Model.get_rune_name(rune)
-                runeCount += 1
                 entry['Summoner{count}Rune{runeCount}Name'.format(count=count, runeCount=runeCount)] = runeName
+                runeCount += 1
         
         count += 1
     
