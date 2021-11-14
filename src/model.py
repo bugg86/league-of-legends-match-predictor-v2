@@ -18,6 +18,17 @@ def get_summoner(name) :
     else :
         print('Could not write file due to an api call error. Please see response message below:')
         print(validation)
+        
+# Make api call to get encrypted summoner id.
+def get_summoner_by_puuid(puuid) :
+    summoner = na1_api.get_summoner_by_puuid(puuid)
+    name = summoner['name']
+    validation = error_check(summoner)
+    if validation == 'good response' :
+        save_summoner(summoner, name)
+    else :
+        print('Could not write file due to an api call error. Please see response message below:')
+        print(validation)
     
 # Save summoner.json.
 def save_summoner(summoner, name) :
@@ -465,6 +476,10 @@ def m_get_runes(participant) :
 # Get summoner level from participant object from participants array.
 def m_get_summoner_level(participant) :
     return participant['summonerLevel']
+
+# Get encrypted puuid from participant object from participants array.
+def m_get_encrypted_puuid(participant) :
+    return participant['puuid']
 
 #==================UTILITY FUNCTIONS==================#
 

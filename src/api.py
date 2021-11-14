@@ -30,6 +30,14 @@ class RiotApi(object) :
             name=name
         )
         return self.request(api_url)
+    
+    # Look up summoner information using their summoner name.
+    def get_summoner_by_puuid(self, puuid) :
+        api_url = Consts.URL['summoner_by_puuid'].format(
+            verison = Consts.API_VERSIONS['summoner'],
+            puuid=puuid
+        )
+        return self.requests(api_url)
 
     # Look up account information using puuid.
     def get_account_by_puuid(self, puuid) :

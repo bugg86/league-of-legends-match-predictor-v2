@@ -1,6 +1,6 @@
 import model as Model
 import time
-import json
+import sys
 
 # Get user input.
 def get_user_input_name():
@@ -49,71 +49,93 @@ def generate_match_dataset(name):
     path = "data/Summoners/{name}/matches/matches.json".format(name=name)
     matchCount = 1
     participantCount = 1
+    apiCallsMade = 1
     
     participantNames = [] # This will be used to wipe data from the data/Summoners/ folder in the future.
-    
-    matchData = []
     
     if Model.check_file(path) :
         match_list = Model.read_json(path)
         for match in match_list :
+            matchDataset = Model.read_json('data/matchDataset.json')
             entry = {}
             startTime = time.time()
             
-            path = "data/{name}/matches/{matchid}.json".format(name=name, matchid=match)
+            path = "data/Summoners/{name}/matches/{matchid}.json".format(name=name, matchid=match)
+            matchData = Model.read_json(path)
+            info = matchData['info']
+            if (info['mapId'] != 11) :
+                print("Match {matchCount} is not on Summoner's Rift. Skipping...")
+                continue
             
             participants = Model.m_get_match_participants(name, match)
-            for participant in participants :
-                # Parse the object for all the data.
-                summonerName = Model.m_get_summoner_name(participant)
-                print(summonerName)
-                summonerRank = Model.get_summoner_rank_score(summonerName)
-                summonerWinRate = Model.get_summoner_winrate(summonerName)
-                summonerLevel = Model.get_summoner_level(summonerName)
-                teamId = Model.m_get_team_id(participant)
-                championName = Model.m_get_champion_name(participant)
-                championId = Model.m_get_champion_id(participant)
-                championMastery = Model.get_champion_mastery_level(summonerName, championId)
-                spell1 = Model.m_get_summoner_spell_name_1(participant)
-                spell2 = Model.m_get_summoner_spell_name_2(participant)
-                
-                # Store data in entry object.
-                entry['Summoner{count}Name'.format(count=participantCount)] = summonerName
-                entry['Summoner{count}Rank'.format(count=participantCount)] = summonerRank
-                entry['Summoner{count}WinRate'.format(count=participantCount)] = summonerWinRate
-                entry['Summoner{count}Level'.format(count=participantCount)] = summonerLevel
-                entry['Summoner{count}TeamId'.format(count=participantCount)] = teamId
-                entry['Summoner{count}ChampionName'.format(count=participantCount)] = championName
-                entry['Summoner{count}ChampionMastery'.format(count=participantCount)] = championMastery
-                entry['Summoner{count}Spell1'.format(count=participantCount)] = spell1
-                entry['Summoner{count}Spell2'.format(count=participantCount)] = spell2
-                
-                # Store rune data in entry object.
-                runeCount = 1
-                runes = Model.m_get_runes(participant)
-                for rune in runes :
-                    if (int(rune) - 8000) > 0 :
-                        runeName = Model.get_rune_name(rune)
-                        entry['Summoner{count}Rune{runeCount}Name'.format(count=participantCount, runeCount=runeCount)] = runeName
-                        runeCount += 1
-                
-                participantCount += 1
+            try :
+                for participant in participants :
+                    # Parse the object for all the data.
+                    puuid = Model.m_get_participant_puuid(participant)
+                    summonerName = Model.m_get_summoner_name(participant)
+                    if (Model.check_dir('data/Summoners/{name}'.format(name=summonerName)) == False) :
+                        Model.get_summoner_by_puuid(puuid)
+                    print(summonerName)
+                    summonerRank = Model.get_summoner_rank_score(summonerName)
+                    summonerWinRate = Model.get_summoner_winrate(summonerName)
+                    summonerLevel = Model.get_summoner_level(summonerName)
+                    teamId = Model.m_get_team_id(participant)
+                    championName = Model.m_get_champion_name(participant)
+                    championId = Model.m_get_champion_id(participant)
+                    championMastery = Model.get_champion_mastery_level(summonerName, championId)
+                    spell1 = Model.m_get_summoner_spell_name_1(participant)
+                    spell2 = Model.m_get_summoner_spell_name_2(participant)
+
+                    # Store data in entry object.
+                    entry['Summoner{count}Name'.format(count=participantCount)] = summonerName
+                    entry['Summoner{count}Rank'.format(count=participantCount)] = summonerRank
+                    entry['Summoner{count}WinRate'.format(count=participantCount)] = summonerWinRate
+                    entry['Summoner{count}Level'.format(count=participantCount)] = summonerLevel
+                    entry['Summoner{count}TeamId'.format(count=participantCount)] = teamId
+                    entry['Summoner{count}ChampionName'.format(count=participantCount)] = championName
+                    entry['Summoner{count}ChampionMastery'.format(count=participantCount)] = championMastery
+                    entry['Summoner{count}Spell1'.format(count=participantCount)] = spell1
+                    entry['Summoner{count}Spell2'.format(count=participantCount)] = spell2
+
+                    # Store rune data in entry object.
+                    runeCount = 1
+                    runes = Model.m_get_runes(participant)
+                    for rune in runes :
+                        if (int(rune) - 8000) > 0 :
+                            runeName = Model.get_rune_name(rune)
+                            entry['Summoner{count}Rune{runeCount}Name'.format(count=participantCount, runeCount=runeCount)] = runeName
+                            runeCount += 1
+
+                    participantCount += 1
+            except :
+                print(sys.exc_info()[0])
+                print('Waiting 90 seconds as a precaution to prevent going over api request limit.')
+                time.sleep(90)
+                continue
             
-            matchCount += 1
+            participantCount = 1 # Reset participant count for next match.
             
             #Save match to file in case of interrupt during loop.
-            matchData.append(entry)
-            Model.dump_json('data/matchData.json', matchData)
-            matchData = Model.read_json('data/matchData.json')
+            matchDataset.append(entry)
+            Model.dump_json('data/matchDataset.json', matchDataset)
+            matchDataset = Model.read_json('data/matchDataset.json')
             
             # Sleep for 40 seconds and print out runtime.
             endTime = time.time()
             print('Runtime is {:.3f}s to generate match {count}.'.format((endTime - startTime), count=matchCount))
-            print('Waiting for 40 seconds before generating next match.')
-            time.sleep(40)
+            if (matchCount == len(match_list)) :
+                print('Successfully added {count} matches to matchDataset.json.'.format(count=matchCount))
+                break
+            else :
+                waitTime = 37 - (int(endTime - startTime)) + 1
+                print('Waiting for {waitTime} seconds before generating next match.'.format(waitTime=waitTime))
+                time.sleep(waitTime)
+                
+            matchCount += 1
             
     else :
         print("No match list found for {name}".format(name=name))
+
 
 
 #============LIVE MATCH DATA GENERATION FUNCTIONS============#
